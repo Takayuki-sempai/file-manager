@@ -1,10 +1,18 @@
+import { homedir } from "node:os"
+
+const currentDir = homedir()
+
+const printCurrentDirectory = () => {
+    console.log(currentDir)
+}
+
 const onUserInput = (chunk) => {
     const chunkStringified = chunk.toString().trim();
     switch (chunkStringified) {
         case '.exit':
             process.exit(0)
     }
-    console.log(chunkStringified);
+    printCurrentDirectory();
 }
 
 const start = async () => {
@@ -16,6 +24,7 @@ const start = async () => {
         process.exit();
     });
     console.log(`Welcome to the File Manager, ${username}!`);
+    printCurrentDirectory();
     process.stdin.on('data', onUserInput);
 }
 
