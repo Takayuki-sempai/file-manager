@@ -1,12 +1,25 @@
 import {printCurrentDir, up} from "./nav/nav.mjs";
 
+const exit = (commandArgs) => {
+    if(commandArgs.size > 1) throw new Error("Command '.error' shouldn't contain any arguments")
+    process.exit(0)
+}
+
 const onUserInput = (chunk) => {
     const chunkStringified = chunk.toString().trim();
-    switch (chunkStringified) {
-        case '.exit':
-            process.exit(0)
-            break;
-        case "up": up()
+    const commandArgs = chunkStringified.split(" ");
+    const command = commandArgs[0];
+    try {
+        switch (command) {
+            case '.exit':
+                exit(commandArgs)
+                break;
+            case "up":
+                up()
+                break;
+        }
+    } catch (e) {
+        console.log(e)
     }
     printCurrentDir();
 }
