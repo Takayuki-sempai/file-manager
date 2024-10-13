@@ -1,4 +1,4 @@
-import {printCurrentDir, up, cd} from "./nav/nav.mjs";
+import {printCurrentDir, up, cd, ls} from "./nav/nav.mjs";
 
 const exit = (commandArgs) => {
     if(commandArgs.size > 1) throw new Error()
@@ -8,7 +8,8 @@ const exit = (commandArgs) => {
 const commandHandlers = {
     ".exit": exit,
     "up": up,
-    "cd": cd
+    "cd": cd,
+    "ls": ls
 }
 
 const onUserInput = async (chunk) => {
