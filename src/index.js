@@ -1,10 +1,4 @@
-import { homedir } from "node:os"
-
-const currentDir = homedir()
-
-const printCurrentDirectory = () => {
-    console.log(currentDir)
-}
+import {printCurrentDir} from "./nav/nav.mjs";
 
 const onUserInput = (chunk) => {
     const chunkStringified = chunk.toString().trim();
@@ -12,7 +6,7 @@ const onUserInput = (chunk) => {
         case '.exit':
             process.exit(0)
     }
-    printCurrentDirectory();
+    printCurrentDir();
 }
 
 const start = async () => {
@@ -24,7 +18,7 @@ const start = async () => {
         process.exit();
     });
     console.log(`Welcome to the File Manager, ${username}!`);
-    printCurrentDirectory();
+    printCurrentDir();
     process.stdin.on('data', onUserInput);
 }
 
