@@ -1,8 +1,13 @@
 import {printCurrentDir, up} from "./nav/nav.mjs";
 
 const exit = (commandArgs) => {
-    if(commandArgs.size > 1) throw new Error("Command '.error' shouldn't contain any arguments")
+    if(commandArgs.size > 1) throw new Error()
     process.exit(0)
+}
+
+const commandHandlers = {
+    ".exit": exit,
+    "up": up
 }
 
 const onUserInput = (chunk) => {
@@ -10,16 +15,10 @@ const onUserInput = (chunk) => {
     const commandArgs = chunkStringified.split(" ");
     const command = commandArgs[0];
     try {
-        switch (command) {
-            case '.exit':
-                exit(commandArgs)
-                break;
-            case "up":
-                up()
-                break;
-        }
+        const handler = commandHandlers[command]
+        handler(commandArgs)
     } catch (e) {
-        console.log(e)
+        console.log("Invalid input")
     }
     printCurrentDir();
 }
