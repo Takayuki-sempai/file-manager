@@ -1,9 +1,14 @@
 import {homedir} from "node:os";
+import {dirname} from "path";
 
-const currentDir = homedir()
+let currentDir = homedir()
 
 const printCurrentDir = () => {
     console.log(currentDir)
 }
 
-export {printCurrentDir}
+const up = () => {
+    currentDir = dirname(currentDir)
+}
+
+export {printCurrentDir, up}

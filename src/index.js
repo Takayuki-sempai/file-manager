@@ -1,10 +1,12 @@
-import {printCurrentDir} from "./nav/nav.mjs";
+import {printCurrentDir, up} from "./nav/nav.mjs";
 
 const onUserInput = (chunk) => {
     const chunkStringified = chunk.toString().trim();
     switch (chunkStringified) {
         case '.exit':
             process.exit(0)
+            break;
+        case "up": up()
     }
     printCurrentDir();
 }
