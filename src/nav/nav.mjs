@@ -8,7 +8,8 @@ const printCurrentDir = () => {
     console.log(currentDir)
 }
 
-const up = () => {
+const up = (args) => {
+    if (args.length !== 1) throw new Error()
     currentDir = dirname(currentDir)
 }
 
