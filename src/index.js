@@ -1,4 +1,4 @@
-import {printCurrentDir, up} from "./nav/nav.mjs";
+import {printCurrentDir, up, cd} from "./nav/nav.mjs";
 
 const exit = (commandArgs) => {
     if(commandArgs.size > 1) throw new Error()
@@ -7,16 +7,17 @@ const exit = (commandArgs) => {
 
 const commandHandlers = {
     ".exit": exit,
-    "up": up
+    "up": up,
+    "cd": cd
 }
 
-const onUserInput = (chunk) => {
+const onUserInput = async (chunk) => {
     const chunkStringified = chunk.toString().trim();
     const commandArgs = chunkStringified.split(" ");
     const command = commandArgs[0];
     try {
         const handler = commandHandlers[command]
-        handler(commandArgs)
+        await handler(commandArgs)
     } catch (e) {
         console.log("Invalid input")
     }

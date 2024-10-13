@@ -1,5 +1,6 @@
 import {homedir} from "node:os";
-import {dirname} from "path";
+import {dirname, isAbsolute, join} from "path";
+import {readdir} from "node:fs/promises";
 
 let currentDir = homedir()
 
@@ -11,4 +12,11 @@ const up = () => {
     currentDir = dirname(currentDir)
 }
 
-export {printCurrentDir, up}
+const cd = async (args) => {
+    if (args.length !== 2) throw new Error()
+    const newDir = args[1]
+    const fullNewDir = isAbsolute(newDir) ? newDir : join(currentDir, newDir)
+    await readdir(fullNewDir).then(() => currentDir = fullNewDir)
+}
+
+export {printCurrentDir, up, cd}
