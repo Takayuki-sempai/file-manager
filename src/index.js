@@ -1,6 +1,7 @@
 import {printCurrentDir, up, cd, ls} from "./nav/nav.mjs";
 import {OperationError} from "./error/error.mjs";
 import {add, cat, cp, mv, rm, rn} from "./file/file.mjs";
+import {os} from "./os/os.mjs";
 
 const exit = (commandArgs) => {
     if(commandArgs.size > 1) throw new Error()
@@ -17,7 +18,8 @@ const commandHandlers = {
     "rn": rn,
     "cp": cp,
     "mv": mv,
-    "rm": rm
+    "rm": rm,
+    "os": os
 }
 
 const onUserInput = async (chunk) => {
