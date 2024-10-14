@@ -2,6 +2,7 @@ import fs from "fs";
 import {toAbsolutePath} from "../nav/nav.mjs";
 import {OperationError} from "../error/error.mjs";
 import {pipeline} from "node:stream/promises";
+import {writeFile} from "node:fs/promises";
 
 const cat = async (args) => {
     if (args.length !== 2) throw new Error()
@@ -14,4 +15,13 @@ const cat = async (args) => {
     }
 }
 
-export {cat}
+const add = async (args) => {
+    if (args.length !== 2) throw new Error()
+    try {
+        await writeFile(toAbsolutePath(args[1]), "", {encoding: "utf8", flag: "wx"});
+    } catch (err) {
+        throw new OperationError()
+    }
+}
+
+export {cat, add}
