@@ -2,8 +2,7 @@ import fs from "fs";
 import {toAbsolutePath} from "../nav/nav.mjs";
 import {OperationError} from "../error/error.mjs";
 import {pipeline} from "node:stream/promises";
-import {writeFile, rm as remove} from "node:fs/promises";
-import {rename as renameFile} from "fs/promises";
+import {writeFile, rm as remove, rename as renameFile, access} from "node:fs/promises";
 import {dirname, join} from "path";
 import {basename as winBasename} from "path/win32";
 import {basename as posixBasename} from "path/posix";
@@ -48,9 +47,20 @@ const cp = async (args) => {
         const source = toAbsolutePath(args[1])
         const fileName = isWindows ? winBasename(source) : posixBasename(source)
         const dist = join(toAbsolutePath(args[2]), fileName)
+        await access(source)
         const rs = fs.createReadStream(source);
         const ws = fs.createWriteStream(dist);
         await pipeline(rs, ws)
+    } catch (err) {
+        throw new OperationError()
+    }
+}
+
+const mv = async (args) => {
+    if (args.length !== 3) throw new Error()
+    try {
+        await cp(args)
+        await rm(args.slice(0, 2))
     } catch (err) {
         throw new OperationError()
     }
@@ -65,4 +75,4 @@ const rm = async (args) => {
     }
 }
 
-export {cat, add, rn, cp, rm}
+export {cat, add, rn, cp, mv, rm}
