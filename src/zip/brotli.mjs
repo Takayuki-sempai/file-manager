@@ -4,9 +4,9 @@ import {access} from "node:fs/promises";
 import fs from "fs";
 import {pipeline} from "node:stream/promises";
 import {OperationError} from "../error/error.mjs";
-import {createBrotliCompress} from "node:zlib";
+import {createBrotliCompress, createBrotliDecompress} from "node:zlib";
 
-const compress = async (args) => {
+const runCommand = async (args, transform) => {
     if (args.length !== 3) throw new Error()
     try {
         const source = toAbsolutePath(args[1])
@@ -14,11 +14,13 @@ const compress = async (args) => {
         await access(source)
         const rs = fs.createReadStream(source);
         const ws = fs.createWriteStream(dist);
-        const zipper = createBrotliCompress()
-        await pipeline(rs, zipper, ws)
+        await pipeline(rs, transform, ws)
     } catch (err) {
         throw new OperationError()
     }
 }
 
-export {compress}
+const compress = async (args) => await runCommand(args, createBrotliCompress());
+const decompress = async (args) => await runCommand(args, createBrotliDecompress());
+
+export {compress, decompress}
