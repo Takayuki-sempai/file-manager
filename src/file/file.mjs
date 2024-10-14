@@ -2,7 +2,7 @@ import fs from "fs";
 import {toAbsolutePath} from "../nav/nav.mjs";
 import {OperationError} from "../error/error.mjs";
 import {pipeline} from "node:stream/promises";
-import {writeFile} from "node:fs/promises";
+import {writeFile, rm as remove} from "node:fs/promises";
 import {rename as renameFile} from "fs/promises";
 import {dirname, join} from "path";
 import {basename as winBasename} from "path/win32";
@@ -56,4 +56,13 @@ const cp = async (args) => {
     }
 }
 
-export {cat, add, rn, cp}
+const rm = async (args) => {
+    if (args.length !== 2) throw new Error()
+    try {
+        await remove(toAbsolutePath(args[1]));
+    } catch (err) {
+        throw new OperationError()
+    }
+}
+
+export {cat, add, rn, cp, rm}
