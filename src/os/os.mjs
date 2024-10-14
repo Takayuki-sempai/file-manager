@@ -11,7 +11,7 @@ const cpusInfo = () => {
 }
 
 const paramHandlers = {
-    "--EOL": () => EOL,
+    "--EOL": () => JSON.stringify(EOL),
     "--cpus": cpusInfo,
     "--homedir": homedir,
     "--username": userInfo().username,
