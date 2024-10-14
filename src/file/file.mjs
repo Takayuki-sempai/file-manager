@@ -15,6 +15,7 @@ const cat = async (args) => {
         const file = toAbsolutePath(args[1])
         const rs = fs.createReadStream(file);
         await pipeline(rs, process.stdout, { end: false })
+        console.log()
     } catch (e) {
         throw new OperationError()
     }
