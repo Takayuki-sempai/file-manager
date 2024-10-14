@@ -1,6 +1,7 @@
 import {homedir} from "node:os";
 import {dirname, isAbsolute, join} from "path";
 import {readdir} from "node:fs/promises";
+import {OperationError} from "../error/error.mjs";
 
 let currentDir = homedir()
 
@@ -13,11 +14,17 @@ const up = (args) => {
     currentDir = dirname(currentDir)
 }
 
+const toAbsolutePath = (filepath) => isAbsolute(filepath) ? filepath : join(currentDir, filepath)
+
 const cd = async (args) => {
     if (args.length !== 2) throw new Error()
     const newDir = args[1]
-    const fullNewDir = isAbsolute(newDir) ? newDir : join(currentDir, newDir)
-    await readdir(fullNewDir).then(() => currentDir = fullNewDir)
+    try {
+        const fullNewDir = toAbsolutePath(newDir)
+        await readdir(fullNewDir).then(() => currentDir = fullNewDir)
+    } catch (e) {
+        throw new OperationError()
+    }
 }
 
 const createCell = (data, cellLength) => {
@@ -29,18 +36,22 @@ const createCell = (data, cellLength) => {
 
 const ls = async (args) => {
     if (args.length !== 1) throw new Error()
-    const files = await readdir(currentDir, {withFileTypes: true})
-    const maxFileNameLength = Math.max(...files.map(file => file.name.length))
-    console.log(`┌─────────┬─${"─".repeat(maxFileNameLength)}─┬───────────┐`)
-    console.log(`│ (index) │ ${createCell("Name", maxFileNameLength)} │   Type    │`)
-    files.forEach((file, index) => {
-        console.log(`├─────────┼─${"─".repeat(maxFileNameLength)}─┼───────────┤`)
-        const indexCell = createCell(index.toString(), 7)
-        const nameCell = createCell(file.name, maxFileNameLength)
-        const typeCell = file.isFile() ? "  file   " : "directory"
-        console.log(`│ ${indexCell} │ ${nameCell} │ ${typeCell} │`)
-    })
-    console.log(`└─────────┴─${"─".repeat(maxFileNameLength)}─┴───────────┘`)
+    try {
+        const files = await readdir(currentDir, {withFileTypes: true})
+        let maxFileNameLength = Math.max(4, ...files.map(file => file.name.length))
+        console.log(`┌─────────┬─${"─".repeat(maxFileNameLength)}─┬───────────┐`)
+        console.log(`│ (index) │ ${createCell("Name", maxFileNameLength)} │   Type    │`)
+        files.forEach((file, index) => {
+            console.log(`├─────────┼─${"─".repeat(maxFileNameLength)}─┼───────────┤`)
+            const indexCell = createCell(index.toString(), 7)
+            const nameCell = createCell(file.name, maxFileNameLength)
+            const typeCell = file.isFile() ? "  file   " : "directory"
+            console.log(`│ ${indexCell} │ ${nameCell} │ ${typeCell} │`)
+        })
+        console.log(`└─────────┴─${"─".repeat(maxFileNameLength)}─┴───────────┘`)
+    } catch (e) {
+        throw new OperationError()
+    }
 }
 
-export {printCurrentDir, up, cd, ls}
+export {printCurrentDir, up, cd, ls, toAbsolutePath}

@@ -1,4 +1,5 @@
 import {printCurrentDir, up, cd, ls} from "./nav/nav.mjs";
+import {OperationError} from "./error/error.mjs";
 
 const exit = (commandArgs) => {
     if(commandArgs.size > 1) throw new Error()
@@ -20,7 +21,11 @@ const onUserInput = async (chunk) => {
         const handler = commandHandlers[command]
         await handler(commandArgs)
     } catch (e) {
-        console.log("Invalid input")
+        if(e instanceof OperationError) {
+            console.log("Operation failed")
+        } else{
+            console.log("Invalid input")
+        }
     }
     printCurrentDir();
 }
